@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Tracker</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment/min/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        #expenseChart {
+            width: 700px !important;
+            height: 500px !important;
+            place-self: center;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 p-6">
+    <h1 class="text-2xl font-bold place-self-center mb-5 text-blue-500">Expense Tracker</h1>
+    <!-- Search & Report Section -->
+    <div class="flex gap-4 mb-6">
+        <input type="text" id="searchExpense" class="border p-2 flex-1" placeholder="Search Expense">
+        <button id="searchBtn" class="bg-blue-500 text-white px-4 py-2">Search</button>
+        <button id="generateReport" class="bg-green-500 text-white px-4 py-2">Generate Report</button>
+    </div>
+
+    <!-- Summary Section -->
+    <div class="bg-white p-4 shadow mb-6 place-items-center">
+        <h2 class="text-xl font-bold mb-5">Summary</h2>
+        <p class="mb-2"><span class="text-blue-500 font-semibold">Total Expense: </span><span id="totalExpense">0</span></p>
+        <p class="mb-2"><span class="text-blue-500 font-semibold">Highest Expense: </span><span id="highestExpense">None</span></p>
+        <p class="mb-2"><span class="text-blue-500 font-semibold">Monthly Expense: </span><span id="monthlyExpense">0</span></p>
+    </div>
+
+    <!-- Group & Expense Container -->
+    <div class="grid grid-cols-2 gap-6">
+        <!-- Groups Section -->
+        <div class="bg-white p-4 shadow">
+            <h2 class="text-xl font-bold mb-2">Groups</h2>
+            <ul id="groupList" class="mb-4"></ul>
+            <button id="openGroupModal" class="bg-blue-500 text-white px-4 py-2">Add Group</button>
+        </div>
+
+        <!-- Expenses Section -->
+        <div class="bg-white p-4 shadow">
+            <h2 class="text-xl font-bold mb-2">Expenses</h2>
+            <ul id="expenseList" class="mb-4"></ul>
+            <button id="openExpenseModal" class="bg-blue-500 text-white px-4 py-2">Add Expense</button>
+        </div>
+    </div>
+
+    <!-- Report Section -->
+    <div class="reportChart hidden bg-white p-4 shadow mt-6">
+        <h2 class="text-xl font-bold mb-2">Expense Report</h2>
+        <canvas id="expenseChart"></canvas>
+    </div>
+
+    <!-- Modals for manage Groups and Expenses -->
+    <div id="groupModal" class="hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div class="bg-white p-6 rounded shadow-md">
+            <h2 class="text-lg font-bold">Manage Group</h2>
+            <input type="hidden" id="groupIndex">
+            <input type="text" id="groupName" class="border p-2 w-full" placeholder="Group Name">
+            <div class="flex justify-end mt-4">
+                <button id="saveGroup" class="bg-green-500 text-white px-4 py-2 mr-2">Save</button>
+                <button id="closeGroupModal" class="bg-red-500 text-white px-4 py-2">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="expenseModal" class="hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div class="bg-white p-6 rounded shadow-md">
+            <h2 class="text-lg font-bold">Manage Expense</h2>
+            <input type="hidden" id="expenseIndex">
+            <input type="text" id="expenseName" class="border p-2 w-full" placeholder="Expense Name">
+            <input type="number" id="expenseAmount" class="border p-2 w-full mt-2" placeholder="Amount">
+            <input type="date" id="expenseDate" class="border p-2 w-full mt-2" placeholder="Date">
+            <select id="expenseGroup" class="border p-2 w-full mt-2">
+                <option value="">Select Group</option>
+            </select>
+            <div class="flex justify-end mt-4">
+                <button id="saveExpense" class="bg-green-500 text-white px-4 py-2 mr-2">Save</button>
+                <button id="closeExpenseModal" class="bg-red-500 text-white px-4 py-2">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script src="index.js"></script>
+</body>
+
+</html>
