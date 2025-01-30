@@ -14,9 +14,9 @@ $(document).ready(function () {
     // $('p:first').click();
 
     //Events in jQuery
-    //Mouse events-->click, double click, mouseenter, mouseleave,mousedown,  hover
+    //Mouse events-->click, double click, mouseenter, mouseleave,mousedown, hover
     //keyboard event-->keypress,keydown
-    //form event-->submit,change,focus,bllur
+    //form event-->submit,change,focus,blur
     //document-->load,scroll,resize,unload
 
     // $('p').mouseenter(function () {
@@ -103,4 +103,19 @@ $(document).ready(function () {
                 $(this).toggleClass("class2");
             },
         })
+
+     $(window).on("scroll",function(){
+      if($(window).scrollTop()>200){
+        $('#scrollToTop').css("transform","translateY(0)");
+      }else{
+        $('#scrollToTop').css("transform","translateY(100)");
+      }
+     })
+
+     $("#scrollToTop").click(function(){
+      $("html,body").animate({
+        scrollTop:"0"
+      },1000)
+     })
+
 });
