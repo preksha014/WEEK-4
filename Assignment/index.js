@@ -22,7 +22,7 @@ $(document).ready(function () {
                     <button onclick="deleteGroup(${index})" class="bg-red-500 text-white px-2 py-1">Delete</button>
                 </div>
             </li>
-            <p class="text-sm text-gray-500">Created: ${moment(g.createdAt).format("YYYY-MM-DD,h:mm A")} | Updated: ${moment(g.updatedAt).format("YYYY-MM-DD, h:mm A")}</p>`
+            <p class="text-sm text-gray-500">Created: ${moment(g.createdAt).format("YYYY-MM-DD,h:mm A")}  |  Updated: ${moment(g.updatedAt).format("YYYY-MM-DD, h:mm A")}</p>`
         ));
     }
 
@@ -31,7 +31,7 @@ $(document).ready(function () {
     function renderExpenses(filteredExpenses = expenses) {
         $("#expenseList").html(filteredExpenses.map((e, index) =>
             `<li class="flex justify-between p-2 border">
-                ${e.name} - ₹${e.amount} (${e.group})
+                ${e.name} - ₹ ${e.amount} (${e.group})
                 <div>
                     <button onclick="editExpense(${index})" class="bg-yellow-500 text-white px-5 py-1">Edit</button>
                     <button onclick="deleteExpense(${index})" class="bg-red-500 text-white px-2 py-1">Delete</button>
@@ -60,11 +60,12 @@ $(document).ready(function () {
 
         let highestExpense = expenses.length ? expenses.reduce((max, e) => e.amount > max.amount ? e : max, expenses[0]) : { name: "None", amount: 0 };
 
-        $("#totalExpense").text(`₹${totalExpense}`);
-        $("#highestExpense").text(`${highestExpense.name} - ₹${highestExpense.amount}`);
+        $("#totalExpense").text(`₹ ${totalExpense}`);
+        $("#highestExpense").text(`${highestExpense.name} - ₹ ${highestExpense.amount}`);
         saveToLocalStorage();
     }
 
+    populateGroupDropdown();
     // Update Filtered Summary
     function updateFilteredSummary() {
         let selectedMonth = $("#monthFilter").val();
@@ -77,38 +78,45 @@ $(document).ready(function () {
         let filteredMonthlyTotal = filteredExpenses.reduce((sum, e) => sum + parseFloat(e.amount), 0);
         let filteredGroupTotal = filteredExpenses.reduce((sum, e) => sum + parseFloat(e.amount), 0);
 
-        $("#filteredMonthlyExpense").text(`₹${filteredMonthlyTotal}`);
-        $("#filteredGroupExpense").text(`₹${filteredGroupTotal}`);
+        $("#filteredMonthlyExpense").text(`₹ ${filteredMonthlyTotal}`);
+        $("#filteredGroupExpense").text(`₹ ${filteredGroupTotal}`);
 
         // Render filtered expenses    
         renderExpenses(filteredExpenses);
     }
-
+    
     // Event Listeners for Filters
     $("#monthFilter, #groupFilter").on("change", updateFilteredSummary);
 
-    // Populate Group Filter Dropdown
-    function populateGroupFilterDropdown() {
-        let groupFilter = $("#groupFilter");
-        groupFilter.html('<option value="">All Groups</option>');
-        groups.forEach(group => {
-            groupFilter.append(`<option value="${group.name}">${group.name}</option>`);
-        });
-        saveToLocalStorage();
-        renderGroups();
-    }
-
-    // Initial population of the group filter dropdown
-    populateGroupFilterDropdown();
-
     //Group Dropdown for Expense
     function populateGroupDropdown() {
-        let groupDropdown = $("#expenseGroup");
+        let groupDropdown = $(".groupDropdown");
         groupDropdown.html('<option value="">Select Group</option>');
         groups.forEach(group => {
             groupDropdown.append(`<option value="${group.name}">${group.name}</option>`);
         });
     }
+
+    // Open Group Modal
+    $("#openGroupModal").click(() => {
+        $("#groupModal").removeClass("hidden");
+    });
+
+    // Open Expense Modal
+    $("#openExpenseModal").click(() => {
+        populateGroupDropdown();
+        $("#expenseModal").removeClass("hidden");
+    });
+
+    // Close Group Modal
+    $("#closeGroupModal").click(() => {
+        $("#groupModal").addClass("hidden");
+    });
+
+    // Close Expense Modal
+    $("#closeExpenseModal").click(() => {
+        $("#expenseModal").addClass("hidden");
+    });
 
     // Save Group
     $("#saveGroup").click(function () {
@@ -135,7 +143,6 @@ $(document).ready(function () {
         saveToLocalStorage();
         renderGroups();
         populateGroupDropdown();
-        populateGroupFilterDropdown();
         $("#groupModal").addClass("hidden");
         $("#groupName").val("");
     });
@@ -170,33 +177,11 @@ $(document).ready(function () {
         $("#expenseName, #expenseAmount, #expenseDate, #expenseGroup").val("");
     });
 
-    // Open Group Modal
-    $("#openGroupModal").click(() => {
-        $("#groupModal").removeClass("hidden");
-    });
-
-    // Open Expense Modal
-    $("#openExpenseModal").click(() => {
-        populateGroupDropdown();
-        $("#expenseModal").removeClass("hidden");
-    });
-
-    // Close Group Modal
-    $("#closeGroupModal").click(() => {
-        $("#groupModal").addClass("hidden");
-    });
-
-    // Close Expense Modal
-    $("#closeExpenseModal").click(() => {
-        $("#expenseModal").addClass("hidden");
-    });
-
     // Edit Group
     window.editGroup = function (index) {
         $("#groupIndex").val(index);
         $("#groupName").val(groups[index].name);
         $("#groupModal").removeClass("hidden");
-        populateGroupFilterDropdown();
         populateGroupDropdown();
     };
 
@@ -209,7 +194,6 @@ $(document).ready(function () {
         renderGroups();
         renderExpenses();
         populateGroupDropdown();
-        populateGroupFilterDropdown();
         updateSummary();
         updateFilteredSummary();
     };

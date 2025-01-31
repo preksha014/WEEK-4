@@ -36,7 +36,7 @@
                 </div>
                 <div>
                     <label for="groupFilter" class="block font-semibold mt-2">Select Group:</label>
-                    <select id="groupFilter" class="border p-2 w-full mb-3 mt-2">
+                    <select class="groupDropdown border p-2 w-full mb-3 mt-2">
                         <option value="">All Groups</option>
                     </select>
                     <p class="mb-2"><span class="text-blue-500 font-semibold">Group Expense: </span><span
@@ -83,7 +83,7 @@
             <input type="text" id="expenseName" class="border p-2 w-full" placeholder="Expense Name">
             <input type="number" id="expenseAmount" class="border p-2 w-full mt-2" placeholder="Amount">
             <input type="date" id="expenseDate" class="border p-2 w-full mt-2" placeholder="Date">
-            <select id="expenseGroup" class="border p-2 w-full mt-2">
+            <select class="groupDropdown border p-2 w-full mt-2">
                 <option value="">Select Group</option>
             </select>
             <div class="flex justify-end mt-4">
@@ -92,10 +92,6 @@
             </div>
         </div>
     </div>
-
-
-
     <script src="index.js"></script>
 </body>
-
 </html>
