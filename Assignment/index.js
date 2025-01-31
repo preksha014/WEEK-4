@@ -83,7 +83,7 @@ $(document).ready(function () {
         // Render filtered expenses    
         renderExpenses(filteredExpenses);
     }
-    
+
     // Event Listeners for Filters
     $("#monthFilter, #groupFilter").on("change", updateFilteredSummary);
 
@@ -237,5 +237,4 @@ $(document).ready(function () {
     renderGroups();
     renderExpenses();
     updateSummary();
-    updateFilteredSummary();
 });
