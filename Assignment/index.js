@@ -1,7 +1,7 @@
 $(document).ready(function () {
     // Intialize groups and expenses array with empty or existing elements of an array
     // parse--> convert string into array of objects
-    let groups = JSON.parse(localStorage.getItem("groups")) || []; 
+    let groups = JSON.parse(localStorage.getItem("groups")) || [];
     let expenses = JSON.parse(localStorage.getItem("expenses")) || [];
 
     // Save data to local storage
@@ -57,22 +57,54 @@ $(document).ready(function () {
     // Update Summary
     function updateSummary() {
         let totalExpense = expenses.reduce((sum, e) => sum + e.amount, 0);
-        
+
         let highestExpense = expenses.length ? expenses.reduce((max, e) => e.amount > max.amount ? e : max, expenses[0]) : { name: "None", amount: 0 };
-        
-        let monthly = expenses.filter(e => moment(e.date).isSame(moment(), "month"))
-                             .reduce((sum, e) => sum + parseFloat(e.amount), 0);
-                             
+
         $("#totalExpense").text(`₹${totalExpense}`);
         $("#highestExpense").text(`${highestExpense.name} - ₹${highestExpense.amount}`);
-        $("#monthlyExpense").text(`₹${monthly}`);
         saveToLocalStorage();
-        
+    }
+
+    // Update Filtered Summary
+    function updateFilteredSummary() {
+        let selectedMonth = $("#monthFilter").val();
+        let selectedGroup = $("#groupFilter").val();
+
+        let filteredExpenses = expenses.filter(e =>
+            (!selectedMonth || moment(e.date).format("YYYY-MM") === selectedMonth) && (!selectedGroup || e.group === selectedGroup)
+        );
+
+        let filteredMonthlyTotal = filteredExpenses.reduce((sum, e) => sum + parseFloat(e.amount), 0);
+        let filteredGroupTotal = filteredExpenses.reduce((sum, e) => sum + parseFloat(e.amount), 0);
+
+        $("#filteredMonthlyExpense").text(`₹${filteredMonthlyTotal}`);
+        $("#filteredGroupExpense").text(`₹${filteredGroupTotal}`);
+
+        // Render filtered expenses    
+        renderExpenses(filteredExpenses);
     }
     
+    // Event Listeners for Filters
+    $("#monthFilter, #groupFilter").on("change", updateFilteredSummary);
+
+    // Populate Group Filter Dropdown
+    function populateGroupFilterDropdown() {
+        let groupFilter = $("#groupFilter");
+        groupFilter.html('<option value="">All Groups</option>');
+        groups.forEach(group => {
+            groupFilter.append(`<option value="${group.name}">${group.name}</option>`);
+        });
+        saveToLocalStorage();
+        renderGroups();
+    }
+
+    // Initial population of the group filter dropdown
+    populateGroupFilterDropdown();
+
     //Group Dropdown for Expense
     function populateGroupDropdown() {
         let groupDropdown = $("#expenseGroup");
+        groupDropdown.html('<option value="">Select Group</option>');
         groups.forEach(group => {
             groupDropdown.append(`<option value="${group.name}">${group.name}</option>`);
         });
@@ -102,6 +134,8 @@ $(document).ready(function () {
 
         saveToLocalStorage();
         renderGroups();
+        populateGroupDropdown();
+        populateGroupFilterDropdown();
         $("#groupModal").addClass("hidden");
         $("#groupName").val("");
     });
@@ -131,6 +165,7 @@ $(document).ready(function () {
         saveToLocalStorage();
         renderExpenses();
         updateSummary();
+        updateFilteredSummary();
         $("#expenseModal").addClass("hidden");
         $("#expenseName, #expenseAmount, #expenseDate, #expenseGroup").val("");
     });
@@ -161,17 +196,22 @@ $(document).ready(function () {
         $("#groupIndex").val(index);
         $("#groupName").val(groups[index].name);
         $("#groupModal").removeClass("hidden");
+        populateGroupFilterDropdown();
+        populateGroupDropdown();
     };
 
     // Delete Group
     window.deleteGroup = function (index) {
         let groupName = groups[index].name;
-        groups.splice(index, 1);    
+        groups.splice(index, 1);
         expenses = expenses.filter(e => e.group !== groupName);
         saveToLocalStorage();
         renderGroups();
         renderExpenses();
+        populateGroupDropdown();
+        populateGroupFilterDropdown();
         updateSummary();
+        updateFilteredSummary();
     };
 
     // Edit Expense
@@ -190,37 +230,12 @@ $(document).ready(function () {
         saveToLocalStorage();
         renderExpenses();
         updateSummary();
+        updateFilteredSummary();
     };
-
-    $("#generateReport").click(() => {
-        $('.reportChart').removeClass("hidden");
-        let groupExpenses = {};
-        expenses.forEach(exp => {
-            groupExpenses[exp.group] = (groupExpenses[exp.amount] || 0) + parseFloat(exp.amount);
-            console.log(groupExpenses);
-        });
-
-        let ctx = $("#expenseChart")[0].getContext("2d");
-        if (window.myChart) {
-            window.myChart.destroy();
-        }
-
-        window.myChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: Object.keys(groupExpenses),
-                datasets: [{
-                    label: "Total Expense by Group",
-                    data: Object.values(groupExpenses),
-                    borderColor: "blue",
-                    fill: false
-                }]
-            }
-        });
-    });
 
     // Initial Render
     renderGroups();
     renderExpenses();
     updateSummary();
+    updateFilteredSummary();
 });
