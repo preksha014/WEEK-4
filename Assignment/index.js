@@ -117,7 +117,7 @@ $(document).ready(function () {
 
         if (!name) return alert("Group name is required!");
 
-        if (!index && groups.some(g => g.name === name)) {
+        if (!index && groups.some(g =>g.name.toLowerCase()===name.toLowerCase())) {
             return alert("Group name already exists!");
         }
 
@@ -148,9 +148,9 @@ $(document).ready(function () {
         let date = $("#expenseDate").val().trim();
         let group = $("#expenseGroup").val().trim();
 
-        if (!name || isNaN(amount) || amount <= 0 || !date || !group) return alert("All fields are required!");
+        if (!name.toLowerCase() || isNaN(amount) || amount <= 0 || !date || !group) return alert("All fields are required!");
 
-        if (!index && expenses.some(e => e.name === name && e.amount === amount && e.date === date && e.group === group)) {
+        if (!index && expenses.some(e => e.name.toLowerCase() === name.toLowerCase() && e.amount === amount && e.date === date && e.group === group)) {
             return alert("Same expense already exists!");
         }
 
