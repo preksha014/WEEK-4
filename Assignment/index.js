@@ -1,16 +1,28 @@
 $(document).ready(function () {
     // Intialize groups and expenses array with empty or existing elements of an array
-    // parse--> convert string into array of objects
     let groups = JSON.parse(localStorage.getItem("groups")) || [];
     let expenses = JSON.parse(localStorage.getItem("expenses")) || [];
 
     // Save data to local storage
-    // Local storage only stores string-->stringify convert array of object into string
+    // Local storage only stores string
     function saveToLocalStorage() {
         localStorage.setItem("groups", JSON.stringify(groups));
         localStorage.setItem("expenses", JSON.stringify(expenses));
     }
 
+    // Search Expenses
+    $("#searchBtn").click(function () {
+        let searchQuery = $("#searchExpense").val().trim();
+
+        //add all expenses with searchQuery in fileteredExpenses
+        if (searchQuery) {
+            let filteredExpenses = expenses.filter(e =>
+                e.name.includes(searchQuery)
+            );
+            renderExpenses(filteredExpenses);
+        }
+    });
+    
     // Render Groups
     function renderGroups() {
         //Add li of group element in Groups container
@@ -41,18 +53,6 @@ $(document).ready(function () {
         ));
         // console.log(filteredExpenses);
     }
-    // Search Expenses
-    $("#searchBtn").click(function () {
-        let searchQuery = $("#searchExpense").val().trim();
-
-        //add all expenses with searchQuery in fileteredExpenses
-        if (searchQuery) {
-            let filteredExpenses = expenses.filter(e =>
-                e.name.includes(searchQuery)
-            );
-            renderExpenses(filteredExpenses);
-        }
-    });
 
     // Update Summary
     function updateSummary() {
